@@ -3,4 +3,4 @@
 
 class UserManager(object):
     def __init__(self, table, struct):
-
+        pass
