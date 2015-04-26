@@ -143,7 +143,7 @@ class SqlPool(threading.Thread):
         self._connections[ident] = conn
         return conn
 
-    def __close_raw_connection(self, ident)
+    def __close_raw_connection(self, ident):
         try:
             conn = self._connection.pop(ident, None)
             if conn is not None:
@@ -164,7 +164,7 @@ class SqlPool(threading.Thread):
     def _get_conn(self):
         ident = current_thread().ident
         wrapConn = self._wrap_conns.get(ident)
-        if not self.__valid_connection(wrap_conn)
+        if not self.__valid_connection(wrap_conn):
             wrap_conn = self.__reconnect(ident)
         return wrap_conn
 
@@ -216,7 +216,7 @@ class SqlPool(threading.Thread):
         _, affected_rows = self._execute(sql)
         return affected_rows
 
-    def execute_return_insertid(self, sql)
+    def execute_return_insertid(self, sql):
         conn, affected_rows = self._execute(sql)
         if conn is None or affected_rows < 1:
             return (affected_rows, 0)
