@@ -5,6 +5,7 @@ import os
 import logging
 import _mysql
 import threading
+import time
 
 from _mysql_exceptions import IntegrityError, OperationalError
 from threading import current_thread
@@ -59,12 +60,14 @@ class SqlPool(threading.Thread):
     __remotes = {}
     __remotes_initial = {}
 
+    valid_time = 1790 
+
     def __new__(cls, host, user, passwd, db, port=3306):
         with SqlPool.__mutex:
             svrIdent = "%s:%s:%s" % (host, port, db)
             pool = SqlPool.__remotes.get(svrIdent)
             if pool is None:
-                pool = SqlPool.__remotes[svrIdent] = object.__new(cls)
+                pool = SqlPool.__remotes[svrIdent] = object.__new__(cls)
         return pool
 
     def __init__(self, host, user, passwd, db, port=3306):
@@ -77,6 +80,7 @@ class SqlPool(threading.Thread):
                 self._host = host
                 self._user = user
                 self._passwd = passwd
+                self._port = port
 
                 self.__conns = {}
                 self.__wrap_conns = {}
@@ -131,13 +135,14 @@ class SqlPool(threading.Thread):
     def __new_raw_connection(self):
         conn = _mysql.connect(
             db = self._db,
-            host = self._user,
+            user= self._user,
+            host = self._host,
             passwd = self._passwd,
             port = self._port)
         conn.set_character_set('utf8')
         return conn
 
-    def __reconnection_raw(self, ident):
+    def __reconnect_raw(self, ident):
         self.__close_raw_connection(ident)
         conn = self.__new_raw_connection()
         self._connections[ident] = conn
@@ -145,31 +150,31 @@ class SqlPool(threading.Thread):
 
     def __close_raw_connection(self, ident):
         try:
-            conn = self._connection.pop(ident, None)
+            conn = self._connections.pop(ident, None)
             if conn is not None:
                 conn.close()
         except Exception, e:
             logging.error("sqlpool error (_release_connection) : %s", e)
 
     def __reconnect(self, ident):
-        self._wrap_conns(ident, None)
+        self._wrap_conns.pop(ident, None)
         conn = self.__reconnect_raw(ident)
         if conn is not None:
             wrap_conn = _SqlConn(conn)
             wrap_conn.execute("SET wait_timeout=%d;" % SqlPool.WAIT_TIMEOUT)
             wrap_conn.last_activity_time = time.time()
-            self._wrap_conns[ident] = wrapConn
-            return wrapConn
+            self._wrap_conns[ident] = wrap_conn
+            return wrap_conn
 
     def _get_conn(self):
         ident = current_thread().ident
-        wrapConn = self._wrap_conns.get(ident)
+        wrap_conn = self._wrap_conns.get(ident)
         if not self.__valid_connection(wrap_conn):
             wrap_conn = self.__reconnect(ident)
         return wrap_conn
 
     def __valid_connection(self, wrap_conn):
-        if wrapConn:
+        if wrap_conn:
             if time.time() - wrap_conn.last_activity_time < SqlPool.valid_time:
                 return True
             try:
@@ -190,6 +195,7 @@ class SqlPool(threading.Thread):
 
         try:
             affected_rows = conn.execute(sql)
+            return conn, affected_rows
         except IntegrityError, e:
             if e[0] == ERR_DUPLICATE_ENTRY:
                 logging.error("MySQL[%s] duplicatekey=[%s], sql=%s", self._host, e, sql)
@@ -206,11 +212,13 @@ class SqlPool(threading.Thread):
                     return conn, affected_rows
                 except Exception, e:
                     logging.error("MySQL[%s] Exception on retry execute(%s), err=[%s]", self._host, sql[:100], e)
+                    raise e
             else:
                 logging.error('MySQL[%s] Exception on execute(%s) err=[%s].', self._host, e)
                 raise e
         except Exception, e:
             logging.error("MySQL[%s] Exception on execute(%s) err=[%s]", self._host, sql[:100], e)
+            raise e
 
     def execute(self, sql):
         _, affected_rows = self._execute(sql)
