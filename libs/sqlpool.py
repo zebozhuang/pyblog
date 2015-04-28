@@ -10,8 +10,6 @@ import time
 from _mysql_exceptions import IntegrityError, OperationalError
 from threading import current_thread
 
-from utils import mysql_escape
-
 
 ERR_SERVER_GONEAWAY = 2006      # (2006, 'MySQL server has gone away')
 ERR_LOST_CONN_IN_QUERY = 2013   # (2013, 'Lost connection to MySQL server during query')
@@ -204,7 +202,7 @@ class SqlPool(threading.Thread):
                 logging.error('MySQL[%s] Exception[%s], sql=%s', self._host, e, sql[:100])
                 raise e
         except OperationalError, e:
-            if err[0] == ERR_SERVER_GONEAWAY:
+            if e[0] == ERR_SERVER_GONEAWAY:
                 logging.warning("MySQL[%s] has gone away on execute(), retry it.")
                 try:
                     conn = self._get_new_conn()
