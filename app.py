@@ -20,7 +20,6 @@ class IndexHandler(tornado.web.RequestHandler):
         self.render("home.html")
 
 if __name__ == '__main__':
-    print settings
     tornado.options.parse_command_line()
     app = tornado.web.Application(handlers=[(r'/', IndexHandler)], **settings)
     http_server = tornado.httpserver.HTTPServer(app)
