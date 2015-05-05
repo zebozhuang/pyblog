@@ -16,3 +16,4 @@ settings = {
 #        "login_url": "/login",
         "xsrf_cookies": True,
 }
+

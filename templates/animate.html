@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="static/jquery/jquery-1.9.1.min.js"></script>
+    <script src="static/jquery/js/jquery-ui-1.10.3.custom.js"></script>
+    <link href="static/jquery/css/cupertino/jquery-ui-1.10.3.custom.css" rel="stylesheet">
+    <link rel="stylesheet" href="static/jquery/themes/base/jquery.ui.all.css"/>
+    <script src="static/jquery/ui/jquery.ui.core.js"></script>
+    <script src="static/jquery/ui/jquery.ui.widget.js"></script>
+    <script src="static/jquery/ui/jquery.ui.position.js"></script>
+    <script src="static/jquery/ui/jquery.ui.menu.js"></script>
+    <script src="static/jquery/ui/jquery.ui.autocomplete.js"></script>
+    <link rel="stylesheet" href="static/css/demos.css"/>
+    
+    <script type="text/javascript">
+        $(document).ready(function() {
+        $("button").click(function() {
+                $("div").animate({left: '350px'});
+                $("#div-log").html($("div-log").html()+"<p>"+"animate() method "+"</p>")
+            });
+        });
+    </script>
+
+</head>
+<body>
+    <h2 id="h2-caption">jQuery code block - realize Animate" </h2>
+    <hr>
+    <hr>
+    <button> Animate Begin</button>
+    <p>xxxxxxxxxxxxxxxxxxxxxxxx</p>
+    <div style="backgroup:#98bf21;height:60px;width:100px;position:absolute;text-align:center;"
+        <b>I can move !</b><br>
+        <b>I can move !</b><br>
+        <b>I can move !</b><br>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div id="div-log">
+        <p>log: </p>
+    </div>
+</body>
+</html>

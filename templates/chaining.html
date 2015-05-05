@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <script src="static/jquery/jquery-1.9.1.min.js"></script>
+        <script src="static/jquery/js/jquery-ui-1.10.3.custom.js"></script>
+        <link href="static/jquery/css/cupertino/jquery-ui-1.10.3.custom.css" rel="stylesheet">
+        <link rel="stylesheet" href="static/jquery/themes/base/jquery.ui.all.css">
+        <script src="static/jquery/ui/jquery.ui.core.js"></script>
+        <script src="static/jquery/ui/jquery.ui.widget.js"></script>
+        <script src="static/jquery/ui/jquery.ui.position.js"></script>
+        <script src="static/jquery/ui/jquery.ui.menu.js"></script>
+        <script src="static/jquery/ui/jquery.ui.autocomplete.js"></script>
+        <link rel="stylesheet" href="static/css/demos.css">
+        <script>
+            $(document).ready(function() {
+                $("button").click(function() {
+                    $("#p1").css("color", "red").slideUp(2000).slideDown(2000);
+                }) 
+            })
+        </script>
+    </head>
+    <body>
+        <p id="p1"> jquery deal with link </p>
+        <button>click here</button>
+    </body>
+</html>

@@ -1,8 +1,32 @@
 <html>
     <head>
-        <title>pyblog</title>
+        <title>A Simple Page</title>
     </head>
+    <script type="text/javascript" src="/static/js/file.js"></script>
+    <script type="text/javascript" src="/static/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="/static/jquery-ui-1.10.3.custom.js"></script>
+    <script type="text/javascript" src="/static/jquery-ui-1.10.3.custom.min.js"></script>
     <body>
-        <p>My Home is being builded now...</p>
+        <h3> xxxx </h3>
+        <ul>
+            <li id="show">show</li>
+            <li id="hide">hide</li>
+            <li id="toggle">goggle</li>
+        </ul>
+        <script type="text/javascript">
+
+            $('#hide').click(function() {
+                $('h3').hide();        
+            })
+
+            $('#show').click(function() {
+                $('h3').show();        
+            })
+
+            $("#toggle").click(function() {
+                $("h3").toggle();    
+            }) 
+        </script>
     </body>
+
 </html>
