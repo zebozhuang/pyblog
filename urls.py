@@ -12,4 +12,5 @@ def include(module):
 
 urls = [
     include("pyblog.login.urls"),                
+    include("pyblog.home.urls"),                
 ]
